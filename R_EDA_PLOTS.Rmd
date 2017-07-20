@@ -1,0 +1,92 @@
+---
+title: "House Price Regression"
+author: "Suzanne"
+date: "25 June 2017"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(ggcorrplot)
+
+if (Sys.info()["nodename"]=="P37") {
+  WorkDir <- "D:/kaggle/HousePrices/"
+  FuncDir <- WorkDir
+} else {
+  WorkDir <- "C:/Users/suzan/Documents/Kaggle/"
+}
+
+source(paste0(FuncDir,"R_FUNCTIONS.R"))
+
+# data from my EDA session
+data.eda <- read.csv(paste0(WorkDir,"train_eda.csv"), stringsAsFactors = FALSE)
+
+```
+
+## R Markdown
+
+```{r plots, echo=FALSE, fig.width = 6, fig.height = 3}
+
+data.shape <- myShape(data.eda)
+
+# box plots for character variables ========================
+
+variables.char <- as.vector(data.shape$COLUMN_NAME[data.shape$DATA_TYPE=="character"])
+
+print("PLOTTING character variables")
+
+for (i in seq_along(variables.char)) {
+  x <- c(variables.char[i], "SalePrice")
+  
+  print(paste(i, "plotting", x[1]))
+  
+  xplot <- data.eda %>%
+    select(one_of(x[1]), SalePrice) %>%
+    ggplot(aes_string(x[1], "SalePrice")) +
+    geom_boxplot() +
+    geom_jitter(alpha = 0.1, colour="coral") +
+    theme(axis.text.x = element_text(angle = 90, hjust =1)) +
+    xlab(x[1])
+
+  plot(xplot)
+}
+
+# scatter charts for numerics ==============================
+
+variables.nums <- as.vector(data.shape$COLUMN_NAME[data.shape$DATA_TYPE=="integer"])
+variables.nums <- setdiff(variables.nums,c("Id"))
+
+# ggplot(dat, aes(x=xvar, y=yvar)) +
+#     geom_point(shape=1) +    # Use hollow circles
+#     geom_smooth()            # Add a loess smoothed fit curve with confidence region
+
+print("PLOTTING numeric variables")
+
+for (i in seq_along(variables.nums)) {
+  x <- c(variables.nums[i], "SalePrice")
+  
+  print(paste(i, "plotting", x[1]))
+  
+  xplot <- data.eda %>%
+    select(one_of(x[1]), SalePrice) %>%
+    ggplot(aes_string(x[1], "SalePrice")) +
+    geom_point(shape=1) +
+    geom_smooth() +
+    ggtitle(x[1])
+
+  plot(xplot)
+}
+
+```
+
+<!-- ## Including Plots -->
+
+<!-- You can also embed plots, for example: -->
+
+<!-- ```{r pressure, echo=FALSE} -->
+<!-- plot(pressure) -->
+<!-- ``` -->
+
+<!-- Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot. -->
