@@ -1,6 +1,6 @@
 # Women In Kaggle - HousePrices
 
-## This repo contains branches containing code from
+## This repo contains branches containing code from:
 
 ### Vathsala (Python)
 ### Suzanne (R)
